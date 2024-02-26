@@ -13,6 +13,7 @@ from noticias_graficos import *
 from noticias_wordcloud import plotar_word_cloud
 import xlsxwriter
 import io
+from cotacoes import busca_cotacao
 
 base_noticias_saida = 'datasets/sentimento_base_noticias_short.xlsx'
 df = pd.read_excel(base_noticias_saida)
@@ -36,6 +37,21 @@ def index():
 
         empresa = dfEmpresa['empresa'].iloc[0]
 
+        cnpj = dfEmpresa['CNPJ'].iloc[0]
+
+        razao = dfEmpresa['Razão social'].iloc[0]
+
+        setor = dfEmpresa['Setor'].iloc[0]
+
+        detalhes = ''
+
+        if (not pd.isnull(cnpj))  and cnpj != '':
+            detalhes = 'CNPJ: ' + str(cnpj)
+            if (not pd.isnull(razao)) and razao != '':
+                detalhes = detalhes + ' - Razão social: ' + str(razao).title()
+            if (not pd.isnull(setor)) and setor != '':
+                detalhes = detalhes + ' - Atividade: ' + str(setor).title()
+
         # adiciona o formato de exibicao
         dfEmpresa['formato'] = dfEmpresa['polaridade'].apply(formato_tabela)
 
@@ -48,9 +64,19 @@ def index():
 
         # plota grafico polaridade media
         lista_dfs_polaridade = gera_lista_curvas_polaridade(df, empresa)
-
         graph_path = (os.path.join('static', 'images', 'grafico_polaridade.png'))
         plota_polaridade_media_sintetico(df, empresa, arquivo=graph_path, lista_dfs_polaridade=lista_dfs_polaridade)
+
+        # plota cotacoes
+        arquivo_cotacoes = ''
+        if len(lista_dfs_polaridade) > 0 and len(lista_dfs_polaridade[0])>0 and (not pd.isnull(dfEmpresa['Código'].iloc[0])):
+            simbolo = dfEmpresa['Código'].iloc[0]
+            if simbolo != '' and simbolo != empresa and simbolo != nome:
+                df_cotacoes = busca_cotacao(simbolo)
+                if df_cotacoes is not None and len(df_cotacoes) >0:
+                    arquivo_cotacoes = (os.path.join('static', 'images', 'grafico_cotacoes.png'))
+                    plota_polaridade_cotacoes(empresa, lista_dfs_polaridade[0], df_cotacoes, simbolo, arquivo=arquivo_cotacoes)
+
 
         # plota os gauges
         plotar_gauge_polaridade(df, empresa=empresa, dimensao='ESG', df_pol=lista_dfs_polaridade[0], arquivo=os.path.join('static', 'images', 'gauge_esg.png'))
@@ -71,7 +97,8 @@ def index():
         plotar_word_cloud(dfEmpresa, empresa=empresa, dimensao='G', arquivo=os.path.join('static', 'images', 'wordcloud_G.png'), coluna_texto='gpt_resumo')
 
         return render_template('index.html', nomes=nomes_empresas, tabela_pos=tabela_dados_pos,
-                                tabela_neg=tabela_dados_neg, empresa_selecionada=nome, ultima_data=ultima_data)
+                                tabela_neg=tabela_dados_neg, empresa_selecionada=nome, ultima_data=ultima_data,
+                                arquivo_cotacoes=arquivo_cotacoes, detalhes=detalhes)
 
     return render_template('index.html', nomes=nomes_empresas)
 
