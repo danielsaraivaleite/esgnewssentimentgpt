@@ -65,10 +65,14 @@
     {% if empresa_selecionada %}
         <! -- Analise da empresa selecionada -->
         <h2>
-          Análise do sentimento {% if empresa_selecionada  %} sobre&nbsp;"{{ empresa_selecionada }}"<br>
+          Análise do sentimento sobre&nbsp;"{{ empresa_selecionada }}"<br>
         </h2>
-        <h3><small class="text-muted">Última noticia:&nbsp;{{ ultima_data }}  {% endif %}</small></h3>
 
+        {% if detalhes and detalhes != '' %}
+        <h6><small class="text-muted"> {{ detalhes }} </small></h6>
+        {% endif %}
+
+        <h3><small class="text-muted">Última noticia:&nbsp;{{ ultima_data }}  </small></h3>
 
 
         <left><h2>Termômetro</h2></left>
@@ -92,6 +96,12 @@
               <button class="btn btn-outline-success" id="btn_excel_grafico_polaridade" type="submit">Exportar dados&nbsp;<i class="fa fa-file-excel-o"></i></button>&nbsp;&nbsp;
           </form>&nbsp;
         </div>
+
+        {% if arquivo_cotacoes and arquivo_cotacoes != '' %}
+            <left><h2>Desempenho acionário</h2></left>
+            <center><img src="{{ url_for('static', filename='images/grafico_cotacoes.png') }}" class="img-fluid"  alt="Gráfico cotações"></center>
+            <br>
+        {% endif %}
 
 
         <left><h2>Descrição da base de dados</h2></left>
