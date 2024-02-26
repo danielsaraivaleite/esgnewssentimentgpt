@@ -2,7 +2,6 @@
 Módulo de grafico de wordcloud das noticias
 Autor: Daniel Saraiva Leite - 2023
 Projeto Análise de sentimentos sobre notícias do tema ESG
-Trabalho de conclusão de curso - MBA Digital Business USP Esalq'
 '''
 
 import pandas as pd
@@ -34,16 +33,21 @@ def plotar_word_cloud(df, empresa, dimensao, arquivo = 'images/wordcloud.png', l
     Plota o wordcloud para noticias de uma unica empresa
     '''
     text = ''
-    text=df[coluna_texto].str.cat(sep=' ')
+    
+    df = df[df['classificacao'] == dimensao]
+    
+    if len(df) > 0:
+        text=df[coluna_texto].str.cat(sep=' ')
     text=text.lower()
     text=' '.join([word for word in text.split()])
     if text is None or text == '':
-        text = 'sem ocorrências'
-    if lematizar:
-        text = lematizador(text)
+        text = 'Nenhum'
+    else:
+        if lematizar:
+            text = lematizador(text)
 
-    for w in empresa.split(' '):
-        text = re.sub(r'\b' + w + r'\b', '', text)
+        for w in empresa.split(' '):
+            text = re.sub(r'\b' + w + r'\b', '', text)
 
     wordcloud = WordCloud(max_font_size=50, max_words=100, background_color="white", stopwords = sw).generate(text)
     plt.figure(figsize=(10,5))
