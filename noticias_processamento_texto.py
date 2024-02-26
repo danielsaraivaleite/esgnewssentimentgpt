@@ -2,7 +2,6 @@
 Módulo de rotinas de processamento textuais usadas para tratar as noticias capturadas
 Autor: Daniel Saraiva Leite - 2023
 Projeto Análise de sentimentos sobre notícias do tema ESG
-Trabalho de conclusão de curso - MBA Digital Business USP Esalq
 '''
 
 import numpy as np
@@ -233,9 +232,22 @@ def filtra_noticias_sem_classificacao(noticias, empresa):
     return df
 
 
+def explode_lista_termos_lista_empresas(empresa, df_empresas, coluna):
+    '''
+     Explode as colunas que tem valores separador por , numa lista
+    '''
+    
+    lista = []
+    
+    if len(df_empresas[df_empresas['empresa'] == empresa][coluna]) > 0 and  (not pd.isnull(df_empresas[df_empresas['empresa'] == empresa][coluna].iloc[0]) ):
+        lista = df_empresas[df_empresas['empresa'] == empresa][coluna].iloc[0].split(',')
+    
+    
+    return lista
+
     
 
-def conta_mencoes_empresas(noticias, empresa, listagem_empresas, arq_apelidos='datasets/apelidos_empresas.xlsx'):
+def conta_mencoes_empresas(noticias, empresa, listagem_empresas):
     '''
      Conta a quatidade de empresas citadas em cada noticia (empresa selecionada x demais)
      importante para nao considerar noticias que falam de muitas empresas
@@ -264,10 +276,11 @@ def conta_mencoes_empresas(noticias, empresa, listagem_empresas, arq_apelidos='d
         empresas_ajust.append(emp_ajustada)
         
     # trata empresas com apelidos
-    df_apelidos = pd.read_excel(arq_apelidos)
-    df_apelidos = df_apelidos[df_apelidos['Nome'] == empresa]
-    for i, r in df_apelidos.iterrows():
-        df2['texto_completo'] = df2['texto_completo'].apply(lambda x : re.sub(r"\b" + r['Apelido'] +  r"\b", emp_ajustada , x, flags=re.IGNORECASE))
+    #df_apelidos = pd.read_excel(arq_apelidos)
+    #df_apelidos = df_apelidos[df_apelidos['Nome'] == empresa]
+    #for i, r in df_apelidos.iterrows():
+    for apelido in explode_lista_termos_lista_empresas(empresa, listagem_empresas, 'apelidos'):
+        df2['texto_completo'] = df2['texto_completo'].apply(lambda x : re.sub(r"\b" + apelido +  r"\b", emp_ajustada , x, flags=re.IGNORECASE))
 
     wordlist = list(map(str.lower, empresas_ajust))
     wordlist = list(set(wordlist))
@@ -336,13 +349,14 @@ def trata_nome_fontes(fonte):
 
     
 
-def filtrar_noticias_pos_coleta_modelo_simplificado(dfNoticias, filtrar_termos_especificos=False):
+def filtrar_noticias_pos_coleta_modelo_simplificado(dfNoticias, df_empresas, filtrar_termos_especificos=False):
     '''
     Filtros pos processamento (exclusoes) 
     O filtro serve para classificar fontes incorretas, empresas que tem termos comuns no seu nome
     e tambem noticias nao relacionadas aos temas E S ou G
     '''
-    dfFiltrado = filtra_citacao_relevante(noticias=dfNoticias, empresa='', listagem_empresas=[], threshold=1.1, aceitar_titulo=False, recalcular_contagem=False)
+
+    dfFiltrado = dfNoticias
 
     # filtra noticias nao relacionadas a ESG
     dfFiltrado = dfFiltrado[dfFiltrado['fonte'].str.lower() != 'Partido Comunista Brasileiro'.lower()] 
@@ -360,10 +374,7 @@ def filtrar_noticias_pos_coleta_modelo_simplificado(dfNoticias, filtrar_termos_e
     dfFiltrado = dfFiltrado[dfFiltrado['fonte'].str.lower() != 'PANROTAS'.lower()] 
     dfFiltrado = dfFiltrado[dfFiltrado['fonte'].str.lower() != 'bomdia.eu'] 
     
-    
-    #dfFiltrado = dfFiltrado[~ ((dfFiltrado['fonte'].str.lower() == 'b3') &  (dfFiltrado['empresa'].str.lower() == 'b3'))     ] 
-    
-    
+
     # Outros - remove noticias com classificacao outros apos aplicacao do modelo de ML
     dfFiltrado = dfFiltrado[dfFiltrado['classificacao'] != 'Outros'] 
     
@@ -384,14 +395,14 @@ def filtrar_noticias_pos_coleta_modelo_simplificado(dfNoticias, filtrar_termos_e
    
 
     # trata empresas que estao associadas a termos genericos sem relacao com ela
-    dfPadroesExcluir = pd.read_excel('datasets/palavras_chave_excluir_empresa.xlsx')
+    dfPadroesExcluir = df_empresas[ ~ pd.isnull(df_empresas['termos_excluir_pesquisa']) ]
     dfFiltrado['excluir_texto'] = False
     dfFiltrado['excluir_titulo'] = False
 
     padrao = ''
     for emp in dfPadroesExcluir['empresa'].unique():
-        lista_termos = list(  (dfPadroesExcluir[ dfPadroesExcluir['empresa'] == emp]['termo_excludente'].str.lower()) )
-        lista_termos = [remove_acentos(t) for t in lista_termos]
+        lista_termos = explode_lista_termos_lista_empresas(emp, dfPadroesExcluir, 'termos_excluir_pesquisa')
+        lista_termos = [remove_acentos(t).lower() for t in lista_termos]
         padrao = '|'.join(  lista_termos  ) 
         
         # filtra termos que sao associados incorretamente com uma empresa e sao falsos relevantes no texto
@@ -409,13 +420,16 @@ def filtrar_noticias_pos_coleta_modelo_simplificado(dfNoticias, filtrar_termos_e
 
     # trata empresas que estao associadas a termos genericos, e que precisam de lista de palavras pra detecta-las
     # exemplo azul linhas aereas, ao buscar apenas por azul retorna-se muitas noticias nao relacionadas
-    dfPadroesExcluir = pd.read_excel('datasets/palavras_chave_incluir_empresa.xlsx')
+    #dfPadroesExcluir = pd.read_excel('datasets/palavras_chave_incluir_empresa.xlsx')
+    
+    dfPadroesExcluir = df_empresas[ ~ pd.isnull(df_empresas['termos_obrigatorios_pesquisa']) ]
+    
     dfFiltrado['excluir_texto'] = False
 
     padrao = ''
     for emp in dfPadroesExcluir['empresa'].unique():
-        lista_termos = list(  (dfPadroesExcluir[ dfPadroesExcluir['empresa'] == emp]['termo_includente'].str.lower()) )
-        lista_termos = [remove_acentos(t) for t in lista_termos]
+        lista_termos = explode_lista_termos_lista_empresas(emp, dfPadroesExcluir, 'termos_obrigatorios_pesquisa')
+        lista_termos = [remove_acentos(t).lower() for t in lista_termos]
         padrao = "|".join(  [r'\b' + x + r'\b' for x in lista_termos] )
 
             
@@ -432,6 +446,7 @@ def filtrar_noticias_pos_coleta_modelo_simplificado(dfNoticias, filtrar_termos_e
 
 
 def criar_hash_noticia(texto, empresa, titulo='', data=None, pergunta=''):
+    '''Criar um identificador unico para o texto da noticia'''
     
     if pergunta != '':
         texto_codificar = texto.strip() + empresa.strip() + pergunta.strip()
@@ -446,6 +461,7 @@ def criar_hash_noticia(texto, empresa, titulo='', data=None, pergunta=''):
 
 
 def ajusta_nomes_empresas_dataframe(df):
+    '''ajusta nome das empresas na base coletada'''
     df['empresa'] = df['empresa'].str.replace(' s.a.', '')
     return df
 

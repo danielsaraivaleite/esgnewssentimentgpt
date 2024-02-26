@@ -1,8 +1,6 @@
 '''
 Módulo que trata a plotagens dos graficos das noticias (exceto wordcloud)
 Autor: Daniel Saraiva Leite - 2023
-Projeto Análise de sentimentos sobre notícias do tema ESG
-Trabalho de conclusão de curso - MBA Digital Business USP Esalq
 '''
 
 import warnings
@@ -17,8 +15,8 @@ from scipy import interpolate
 import scipy.stats
 from matplotlib.dates import YearLocator, MonthLocator, DateFormatter
 from noticias_timeline import plota_timeline
-from noticias_processamento_texto import remove_acentos, remove_termos_comuns, aplica_stemming_texto, remove_palavras_texto, conta_termos_esg, classifica_texto, classifica_textos_coletados, filtra_noticias_nao_relacionadas, filtra_noticias_sem_classificacao, conta_mencoes_empresas, filtra_citacao_relevante, trim_texto
-from analise_sentimento_modelo import *
+from noticias_processamento_texto import *
+from analise_sentimento_modelo_gpt import *
 import math
 import re
 
@@ -55,50 +53,7 @@ def plota_timeline_polaridade(dfEmpresa, sinal, numero_noticias=2, empresa='', i
     plota_timeline(dates, labels, 'Timeline de amostra de noticias ' + desc + ' para empresa '+ empresa.capitalize() + ' (2 notícias/ano)', arquivo)
     
     
-    
-def plota_polaridade_media(df, empresa, arquivo='', lista_dfs_polaridade=None):
-    '''
-    Plota grafico de polaridade media (em 4 quadrantes), separando geral, e, s e g
-    '''
-
-    # plota grafico polaridade media
-    plt.style.use('seaborn-dark')
-    
-    ldfVisoesESG = None
-    if lista_dfs_polaridade is not None:
-        ldfVisoesESG = lista_dfs_polaridade
-        
-    if ldfVisoesESG is None:
-        ldfVisoesESG = [gera_curva_polaridade_media(df, empresa, 'ESG')]
-    llabelVisoesESG = ['ESG Geral']
-
-    for l in 'ESG':
-        if len(ldfVisoesESG) < 4:
-            ldfVisoesESG.append( gera_curva_polaridade_media(df, empresa, l)  )
-        llabelVisoesESG.append(l)
-
-    # plotando o gráfico com a interpolação
-    fig, ax = plt.subplots(2,2, figsize=(8, 6), sharex=True, sharey=True)
-    l = 0
-    for i in range(0,2):
-        for j in range (0,2):
-            if ldfVisoesESG[l] is not None and len(ldfVisoesESG[l]) > 0:
-                ax[i,j].plot(ldfVisoesESG[l].index, ldfVisoesESG[l]['polaridade_fit'], label='Interpolação', color='green', linewidth=1)
-                #ax[i,j].plot(ldfVisoesESG[l].index, ldfVisoesESG[l]['polaridade_ewma'], label='EWMA', color='black', linewidth=0.4)
-                ax[i,j].scatter(ldfVisoesESG[l].index, ldfVisoesESG[l]['polaridade'], label='Ponto', s=2, color='blue', linewidth=0.2)
-                # ajustando o visual do gráfico
-                ax[i,j].set_title(llabelVisoesESG[l], fontsize=10)
-                ax[i,j].tick_params(axis='x', labelrotation=90)
-                ax[i,j].xaxis.set_major_locator(YearLocator() )
-                ax[i,j].xaxis.set_major_formatter(DateFormatter('%Y'))
-                ax[i,j].xaxis.set_minor_locator(MonthLocator())
-            l = l+1
-    plt.tight_layout()
-    plt.ylim(-1, 1)
-    fig.suptitle('Histórico de polaridade das notícias da empresa '+empresa.capitalize()+' [-1 negativo, 0 neutro, +1 positivo]', y=1.01)
-    plt.savefig(arquivo, bbox_inches='tight')
-    plt.show()
-
+   
     
 def plota_polaridade_media_sintetico(df, empresa, arquivo='', lista_dfs_polaridade=None):
     '''
@@ -349,4 +304,42 @@ def plotar_correlacao_rankings(correls=None, arq='datasets/resultado_correlacao.
     plt.show()
 
     sns.set(font_scale=1)
+    
+    
+def plota_polaridade_cotacoes(empresa, df_polaridade, df_cotacoes, simbolo, arquivo=''):
+    '''
+    Plota grafico de polaridade media e cotações
+    '''
+        
+    df_cotacoes['Data'] = pd.to_datetime(df_cotacoes['Data'])
+
+    #filtros
+    df_polaridade = df_polaridade[df_polaridade.index >= np.min(df_cotacoes['Data']) ]
+    
+    sns.set_style("dark")
+    
+    fig, ax1 = plt.subplots(1,1, figsize=(9, 6), sharex=True)
+    
+    color = 'black'
+    ax1.set_ylabel('Polaridade', color=color)
+    ax1.tick_params(axis='y', labelcolor=color)
+    ax1.tick_params(axis='x', labelrotation=90)
+    
+    ax1.plot(df_polaridade.index, df_polaridade['polaridade_fit'], label='Polaridade Média ESG Geral', color=color, linewidth=1)
+
+    ax2 = ax1.twinx() 
+    color = 'mediumblue'
+    ax2.set_ylabel(simbolo, color=color)
+    ax2.tick_params(axis='y', labelcolor=color)
+    ax2.plot(df_cotacoes['Data'], df_cotacoes['Cotação'], label='Cotação '+ simbolo, color=color, linewidth=1)
+
+
+    plt.tight_layout()
+    fig.suptitle('Polaridade das notícias [-1 negativo, 0 neutro, +1 positivo] x Cotação (últimos 12 meses)', y=1.01)
+
+    if arquivo != '':
+        plt.savefig(arquivo, bbox_inches='tight')
+
+    plt.show()
+
     

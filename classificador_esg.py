@@ -2,7 +2,6 @@
 Este módulo implementa o classificador semi-supervisionado para indicar se a noticia é E, S ou G, ou Outros
 Autor: Daniel Saraiva Leite - 2023
 Projeto Análise de sentimentos sobre notícias do tema ESG
-Trabalho de conclusão de curso - MBA Digital Business USP Esalq
 '''
 
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score

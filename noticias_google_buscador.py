@@ -5,7 +5,6 @@ Fonte:https://github.com/ranahaani/GNews/blob/8591313e3fdaaf44e2e09f2265254fc3aa
 
 A nossa adaptação foi principalmente para permitir a busca no tempo
 Projeto Análise de sentimentos sobre notícias do tema ESG
-Trabalho de conclusão de curso - MBA Digital Business USP Esalq
 '''
 
 import logging

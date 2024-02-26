@@ -6,7 +6,7 @@ https://stackoverflow.com/questions/35091557/replace-nth-occurrence-of-substring
 https://dadoverflow.com/2021/08/17/making-timelines-with-python/
 
 Projeto Análise de sentimentos sobre notícias do tema ESG
-Trabalho de conclusão de curso - MBA Digital Business USP Esalq
+
 '''
 
 import matplotlib.pyplot as plt
