@@ -19,7 +19,6 @@ import requests
 import pandas as pd
 import feedparser
 from bs4 import BeautifulSoup as Soup
-#from dotenv import load_dotenv
 import random
 import datetime as dt
 
@@ -263,8 +262,9 @@ def busca_noticias_google_news(palavras, data_limite='', after=False):
     df = pd.DataFrame(resultado)
     
     if (len(df) > 0):
-        df['data_publicacao'] = pd.to_datetime(df['data_publicacao'])
+        df['data_publicacao'] = pd.to_datetime(df['data_publicacao'], format='mixed')
         df['data_publicacao'] = df['data_publicacao'].dt.tz_localize(None)
+        df['data_publicacao'] = pd.to_datetime(df['data_publicacao'] )
 
     return df
 

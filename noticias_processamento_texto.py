@@ -14,12 +14,11 @@ import datetime as dt
 import spacy
 import string
 import hashlib
+from noticias_io import  le_termos_esg_para_df
 nltk.download('rslp')
 nltk.download('punkt')
 nltk.download('stopwords')
 
-arquivo_termos_esg = 'datasets/palavras_chave_esg.xlsx'
-base_noticias = 'datasets/base_noticias.xlsx'
 
 stopwords = nltk.corpus.stopwords.words('portuguese')
 
@@ -199,7 +198,7 @@ def classifica_textos_coletados(noticias, apenas_titulos=False):
     '''
     Classifica todas as noticias
     '''
-    dfTermos = pd.read_excel(arquivo_termos_esg)
+    dfTermos = le_termos_esg_para_df()
     
     noticias['classificacao'] = noticias['texto_completo'].apply(lambda x : classifica_texto(x, dfTermos ) )
     
@@ -276,9 +275,7 @@ def conta_mencoes_empresas(noticias, empresa, listagem_empresas):
         empresas_ajust.append(emp_ajustada)
         
     # trata empresas com apelidos
-    #df_apelidos = pd.read_excel(arq_apelidos)
-    #df_apelidos = df_apelidos[df_apelidos['Nome'] == empresa]
-    #for i, r in df_apelidos.iterrows():
+
     for apelido in explode_lista_termos_lista_empresas(empresa, listagem_empresas, 'apelidos'):
         df2['texto_completo'] = df2['texto_completo'].apply(lambda x : re.sub(r"\b" + apelido +  r"\b", emp_ajustada , x, flags=re.IGNORECASE))
 
@@ -420,8 +417,7 @@ def filtrar_noticias_pos_coleta_modelo_simplificado(dfNoticias, df_empresas, fil
 
     # trata empresas que estao associadas a termos genericos, e que precisam de lista de palavras pra detecta-las
     # exemplo azul linhas aereas, ao buscar apenas por azul retorna-se muitas noticias nao relacionadas
-    #dfPadroesExcluir = pd.read_excel('datasets/palavras_chave_incluir_empresa.xlsx')
-    
+
     dfPadroesExcluir = df_empresas[ ~ pd.isnull(df_empresas['termos_obrigatorios_pesquisa']) ]
     
     dfFiltrado['excluir_texto'] = False

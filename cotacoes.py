@@ -5,6 +5,7 @@ import pandas as pd
 
 def busca_cotacao(simbolo):
 
+    # busca site itau corretora, maximo 1 ano
     url = 'https://www.itaucorretora.com.br/Grafico/CotacoesMultilinha?papeis=' + simbolo + '&periodo=D'
 
     df = None

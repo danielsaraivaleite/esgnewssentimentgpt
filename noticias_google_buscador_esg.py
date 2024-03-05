@@ -12,10 +12,9 @@ import unidecode
 import datetime as dt
 from noticias_google_buscador import busca_noticias_google_news
 from noticias_processamento_texto import *
+from noticias_io import le_termos_esg_para_df
 
 warnings.filterwarnings('ignore')
-arquivo_termos_esg = 'datasets/palavras_chave_esg.xlsx'
-base_noticias = 'datasets/base_noticias.xlsx'
 
 
 def busca_noticias_google_periodo(termo, atualiza=False, ultima_data=None):
@@ -59,7 +58,7 @@ def busca_noticias_google_esg(empresa_pesquisada, atualiza=False, ultima_data=No
     '''
     Busca as noticias do google 
     '''
-    dfTermos = pd.read_excel(arquivo_termos_esg)
+    dfTermos = le_termos_esg_para_df()
     
     empresa_pesquisada_aju = empresa_pesquisada.replace(' ', '+')
     empresa_pesquisada_aju = empresa_pesquisada_aju.replace('&', '%26')
