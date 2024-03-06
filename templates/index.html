@@ -48,12 +48,15 @@
         <span class="navbar-text">&nbsp;Empresa:</span>&nbsp;
         <form class="d-flex" role="search" name="formbuscaemp" id="formbuscaemp" method="POST">
 
-              <select class="form-select" aria-label="Selecione a empresa" name="nomes" id="nomes">
+            <input class="form-control" list="lista_empresas_opcoes" id="nomes" name = "nomes" placeholder="{{  empresa_selecionada if (false and empresa_selecionada is defined and empresa_selecionada is not none and empresa_selecionada.strip() != '') else 'Selecione a empresa...'   }}">
+
+                <datalist id="lista_empresas_opcoes">
                   {% for nome in nomes %}
                       <option value="{{ nome }}"  {% if empresa_selecionada == nome %} selected {% endif %}    >{{ nome }}</option>
                   {% endfor %}
-              </select>&nbsp;
-              <button class="btn btn-outline-success" id="btn_analisar" type="submit">Analisar</button>
+                </datalist>&nbsp;
+
+                <button class="btn btn-outline-success" id="btn_analisar" type="submit">Analisar</button>
           </form>
       </div>
 
@@ -65,17 +68,17 @@
     {% if empresa_selecionada %}
         <! -- Analise da empresa selecionada -->
         <h2>
-          Análise do sentimento sobre&nbsp;"{{ empresa_selecionada }}"<br>
+          &nbsp;Análise do sentimento sobre&nbsp;"{{ empresa_selecionada }}"<br>
         </h2>
 
         {% if detalhes and detalhes != '' %}
-        <h6><small class="text-muted"> {{ detalhes }} </small></h6>
+        <h6><small class="text-muted">&nbsp; {{ detalhes }} </small></h6>
         {% endif %}
 
-        <h3><small class="text-muted">Última noticia:&nbsp;{{ ultima_data }}  </small></h3>
+        <h3><small class="text-muted">&nbsp;Última noticia:&nbsp;{{ ultima_data }}  </small></h3>
 
 
-        <left><h2>Termômetro</h2></left>
+        <left><h2>&nbsp;Termômetro</h2></left>
         <div class="container text-center">
           <div class="row">
             <div class="col-sm"><img src="{{ url_for('static', filename='images/gauge_esg.png') }}" class="img-fluid"  alt="Termômetro ESG Geral"></div>
@@ -86,7 +89,7 @@
         </div>
 
 
-        <left><h2>Histórico</h2></left>
+        <left><h2>&nbsp;Histórico</h2></left>
         <center><img src="{{ url_for('static', filename='images/grafico_polaridade.png') }}" class="img-fluid"  alt="Gráfico polaridade"></center>
         <! -- Exportar excel grafico historico -->
         <br>
@@ -98,24 +101,24 @@
         </div>
 
         {% if arquivo_cotacoes and arquivo_cotacoes != '' %}
-            <left><h2>Desempenho acionário</h2></left>
+            <left><h2>&nbsp;Desempenho acionário</h2></left>
             <center><img src="{{ url_for('static', filename='images/grafico_cotacoes.png') }}" class="img-fluid"  alt="Gráfico cotações"></center>
             <br>
         {% endif %}
 
 
-        <left><h2>Descrição da base de dados</h2></left>
+        <left><h2>&nbsp;Descrição da base de dados</h2></left>
         <center><img src="{{ url_for('static', filename='images/grafico_base_dados.png') }}" class="img-fluid"  alt="Gráfico base de dados"></center>
         <br>
 
 
-        <left><h2>Timeline</h2></left>
+        <left><h2>&nbsp;Timeline</h2></left>
         <center><img src="{{ url_for('static', filename='images/grafico_timeline_pos.png') }}" class="img-fluid"  alt="Timeline positivas"></center>
         <br>
         <center><img src="{{ url_for('static', filename='images/grafico_timeline_neg.png') }}" class="img-fluid"  alt="Timeline negativas"></center>
 
         <br>
-        <h2>Principais notícias positivas</h2>
+        <h2>&nbsp;Principais notícias positivas</h2>
 
         <div class="table-responsive">
             <table class="table table-striped table-sm">
@@ -149,7 +152,7 @@
             </table>
         </div>
         <br>
-        <h2>Principais notícias negativas</h2>
+        <h2>&nbsp;Principais notícias negativas</h2>
              <div class="table-responsive">
 
                 <table class="table table-striped table-sm">
@@ -195,15 +198,15 @@
 
 
         <br>
-        <left><h2>Wordcloud - dimensão E </h2></left>
+        <left><h2>&nbsp;Wordcloud - dimensão E </h2></left>
         <center><img src="{{ url_for('static', filename='images/wordcloud_E.png') }}" class="img-fluid"  alt="Wordcloud - notícias E "></center>
 
         <br>
-        <left><h2>Wordcloud - dimensão S </h2></left>
+        <left><h2>&nbsp;Wordcloud - dimensão S </h2></left>
         <center><img src="{{ url_for('static', filename='images/wordcloud_S.png') }}" class="img-fluid"  alt="Wordcloud - notícias S "></center>
 
         <br>
-        <left><h2>Wordcloud - dimensão G </h2></left>
+        <left><h2>&nbsp;Wordcloud - dimensão G </h2></left>
         <center><img src="{{ url_for('static', filename='images/wordcloud_G.png') }}" class="img-fluid"  alt="Wordcloud - notícias G "></center>
 
 
@@ -221,7 +224,7 @@
                         </h2>
                         <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
                           <div class="accordion-body">
-                            <strong>Como utilizar a ferramenta? </strong>Selecione a empresa no menu e clique em <strong>Analisar</strong>. Será aplicado um algoritmo de análise de sentimentos a um conjunto de notícias previamente capturado para a empresa. Atualmente, foram capturados dados até Fevereiro de 2023.
+                            <strong>Como utilizar a ferramenta? </strong>Selecione a empresa no menu e clique em <strong>Analisar</strong>. Será aplicado um algoritmo de análise de sentimentos a um conjunto de notícias previamente capturado para a empresa. Para a maioria das empresas, as notícias foram capturadas até Fevereiro de 2023.
                             <br><strong>Importante: </strong>
                             <ul>
                                 <li>Esta ferramenta foi construída apenas para fins de <strong>pesquisa acadêmica</strong>.</li>

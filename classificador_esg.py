@@ -26,7 +26,16 @@ def determina_classe(classes, probs, threshold=0.5):
     '''
     if (probs[   np.where(classes=='Outros')[0][0]   ] > threshold):
         return 'Outros'
-    return classes[np.argmax(probs)]
+    
+    classe_predita = classes[np.argmax(probs)]
+    
+    if classe_predita not in ('E', 'S', 'G'):
+        args = np.argsort(probs)
+        arg = args[-2]    
+        classe_predita = classes[  arg   ] 
+        
+    
+    return classe_predita
 
 
 
