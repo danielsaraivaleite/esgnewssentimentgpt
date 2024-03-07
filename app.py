@@ -16,6 +16,7 @@ import xlsxwriter
 import io
 from cotacoes import busca_cotacao
 from noticias_io import le_base_noticias_compacta_para_df
+from noticias_processamento_texto import remove_acentos
 
 df = le_base_noticias_compacta_para_df()
 # carrega lista de empresas
@@ -34,10 +35,15 @@ def index():
     '''
 
     # processa a busca
-    if request.method == 'POST':
+    if request.method == 'POST' or request.method == 'GET' :
         nome = request.form.get('nomes')
+        if len( busca_nome_df(df, nome) ) > 0:
+            session['nome'] = nome
+            return render_template("loading.html")
 
-        if len( df[df['Nome'].str.lower() == nome.lower()]  ) > 0:
+    if 'empresa' in request.args:
+        nome = request.args.get('empresa', default = '', type = str)
+        if len( busca_nome_df(df, nome) ) > 0:
             session['nome'] = nome
             return render_template("loading.html")
 
@@ -50,9 +56,22 @@ def index():
     # pagina principal de busca
     return render_template('index.html', nomes=nomes_empresas)
 
+def busca_nome_df(df, nome):
+    if df is None:
+        return df
+    return df[df['Nome'].apply(lambda x : trata_nome(x)) == trata_nome(nome)]
+
+def trata_nome(nome):
+    if pd.isnull(nome) or nome is None:
+        return nome
+    else:
+        return remove_acentos(nome.lower()).replace(' ', '_').replace('&','e' )
+
 
 def renderiza_dashboard(nome):
-    dfEmpresa = df[df['Nome'].str.lower() == nome.lower()]
+    dfEmpresa = busca_nome_df(df, nome)
+
+    nome = dfEmpresa['Nome'].iloc[0]
 
     empresa = dfEmpresa['empresa'].iloc[0]
 

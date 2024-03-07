@@ -12,7 +12,7 @@ lista_empresas = 'datasets/lista_empresas.xlsx'
 arquivo_termos_esg = 'datasets/palavras_chave_esg.xlsx'
 base_noticias_saida = 'datasets/sentimento_base_noticias.parquet'
 base_noticias_saida_short = 'datasets/sentimento_base_noticias_short.parquet'
-caminho_cache='datasets/gpt_cache.xlsx'
+caminho_cache='datasets/gpt_cache.parquet'
 colunas_data = ['data_publicacao', 'ultima_data_publicacao', 'data']
 
 def __ajusta_datas_df(df):
