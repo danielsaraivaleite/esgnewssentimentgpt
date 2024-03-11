@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from datetime import date
 import numpy as np
 from datetime import timedelta
+from dateutil.relativedelta import relativedelta
 import re
 
 def replacenth(string, sub, wanted, n):
@@ -38,8 +39,10 @@ def plota_timeline(dates, labels, titulo, arquivo=''):
         min_date = date.today()
         max_date = date.today()
     else:
-        min_date = date(np.min(dates).year - 2, np.min(dates).month, np.min(dates).day)
-        max_date = date(np.max(dates).year + 2, np.max(dates).month, np.max(dates).day)
+        #min_date = date(np.min(dates).year - 2, np.min(dates).month, np.min(dates).day)
+        #max_date = date(np.max(dates).year + 2, np.max(dates).month, np.max(dates).day)
+        min_date = np.min(dates) - relativedelta(years=2)
+        max_date = np.max(dates) + relativedelta(years=2)
 
     labels = ajusta_labels(labels)
 

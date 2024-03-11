@@ -9,7 +9,7 @@ from flask import Flask, render_template, request, make_response, session
 
 import os
 import pandas as pd
-from analise_sentimento_modelo_gpt import gera_curva_polaridade_media
+from analise_sentimento_modelo_gpt import gera_curva_polaridade_media, gera_maiores_variacoes, gera_variacoes_polaridades
 from noticias_graficos import *
 from noticias_wordcloud import plotar_word_cloud
 import xlsxwriter
@@ -17,10 +17,26 @@ import io
 from cotacoes import busca_cotacao
 from noticias_io import le_base_noticias_compacta_para_df
 from noticias_processamento_texto import remove_acentos
+import numpy as np
+import datetime as dt
 
+# inicializacao ####################
+# carrega noticias
 df = le_base_noticias_compacta_para_df()
 # carrega lista de empresas
 nomes_empresas = list(df.sort_values(by='Nome')['Nome'].drop_duplicates())
+matriz_variacoes_pol = gera_variacoes_polaridades(df)
+#mais negativas
+var_mais_negativas = gera_maiores_variacoes(matriz_variacoes_pol, negativa=True, threshold=0.5, max_empresa=5).replace(np.nan, '', regex=True).to_dict(orient='records')
+#mais positivas
+var_mais_positivas= gera_maiores_variacoes(matriz_variacoes_pol, negativa=False, threshold=0.6, max_empresa=5).replace(np.nan, '', regex=True).to_dict(orient='records')
+#grafico base de dados
+plotar_descricao_base(df, plotar_histograma=False, arquivo=r'static/images/grafico_base_dados_total.png')
+# contagem
+qt_emp = len(df['empresa'].unique())
+qt_emp_ab = len( df[  (~ pd.isnull(df['Código'] ) )   & (df['Código'] != 'N/A')    ]['empresa'].unique())
+
+####################
 
 app = Flask(__name__)
 
@@ -53,8 +69,18 @@ def index():
     else:
         session.pop('nome', None)
 
+    # ultimas noticias
+    df_ultimas_negativas, df_ultimas_positivas = gera_ultimas_noticias(df)
+
     # pagina principal de busca
-    return render_template('index.html', nomes=nomes_empresas)
+    return render_template('index.html', nomes=nomes_empresas, formato_tabela=formato_tabela,
+                            trata_nome=trata_nome, tabela_destaques_neg=var_mais_negativas,
+                            tabela_destaques_pos=var_mais_positivas,
+                            df_ultimas_negativas=df_ultimas_negativas.to_dict(orient='records'),
+                            df_ultimas_positivas=df_ultimas_positivas.to_dict(orient='records'),
+                            qt_emp=qt_emp, qt_emp_ab=qt_emp_ab
+                          )
+
 
 def busca_nome_df(df, nome):
     if df is None:
@@ -65,7 +91,7 @@ def trata_nome(nome):
     if pd.isnull(nome) or nome is None:
         return nome
     else:
-        return remove_acentos(nome.lower()).replace(' ', '_').replace('&','e' )
+        return remove_acentos(nome.lower()).replace(' ', '_').replace('&','e' ).replace("'", '').replace('!', '').strip()
 
 
 def renderiza_dashboard(nome):
@@ -203,6 +229,19 @@ def gera_lista_curvas_polaridade(df, empresa):
                             gera_curva_polaridade_media(df, empresa, 'G', alfa=calibragem_alfa[3])]
 
     return lista_dfs_polaridade
+
+
+def gera_ultimas_noticias(df):
+    df_recente = df[df.data_publicacao > pd.to_datetime(dt.date.today()) - pd.Timedelta(days=93)]
+    df_recente_neg = df_recente[df_recente.polaridade < 0]
+    df_recente_neg = df_recente_neg.sort_values('polaridade', ascending = True)
+    df_recente_neg_emp = df_recente_neg.groupby('empresa').head(2)[:30]
+
+    df_recente_pos = df_recente[df_recente.polaridade > 0]
+    df_recente_pos = df_recente_pos.sort_values('polaridade', ascending = False)
+    df_recente_pos_emp = df_recente_pos.groupby('empresa').head(2)[:30]
+
+    return df_recente_neg_emp, df_recente_pos_emp
 
 
 def formato_tabela(n):

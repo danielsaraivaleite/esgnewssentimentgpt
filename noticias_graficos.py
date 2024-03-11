@@ -124,6 +124,7 @@ def plotar_descricao_base(df, plotar_histograma=False, arquivo=''):
     Plota grafico em 4 quadrantes com descricao da base
     '''    
     sns.set_style("white")
+    sns.set_palette("Paired")
     # agrupando por fonte, dimensao e datas
     dfFontes  = df.groupby("fonte").count().reset_index(drop=False)
     dfFontes['fonte'] = dfFontes.apply(lambda row : 'Outros' if row['titulo'] < 0.03 * np.sum(dfFontes['titulo']) else row['fonte'] , axis=1)

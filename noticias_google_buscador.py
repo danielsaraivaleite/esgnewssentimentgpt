@@ -234,7 +234,7 @@ def processar_site_noticia_buscado(item):
 
 url = 'https://news.google.com/rss/search?q={}&hl=pt-BR&gl=BR&ceid=BR:pt-419'
 
-def busca_noticias_google_news(palavras, data_limite='', after=False):
+def busca_noticias_google_news(palavras, data_limite='', after=False,verbose=False):
     '''
     Realiza a busca das noticias no Google
             Parameters:
@@ -248,12 +248,14 @@ def busca_noticias_google_news(palavras, data_limite='', after=False):
     
     q = palavras
     
-    periodo = '+before:'
+    periodo = ' before:'
     if after:
-        periodo = '+after:'
+        periodo = ' after:'
     
     if data_limite != '':
         q = q +periodo + data_limite
+        
+    q = q.replace(' ', '%20')
     
     feed_data = feedparser.parse(url.format(q), agent=USER_AGENT)
 
@@ -265,6 +267,9 @@ def busca_noticias_google_news(palavras, data_limite='', after=False):
         df['data_publicacao'] = pd.to_datetime(df['data_publicacao'], format='mixed')
         df['data_publicacao'] = df['data_publicacao'].dt.tz_localize(None)
         df['data_publicacao'] = pd.to_datetime(df['data_publicacao'] )
+        
+    if verbose:
+        print(url.format(q) + ' - resultados: ' + str(len(df)) + ' até ' + data_limite)
 
     return df
 

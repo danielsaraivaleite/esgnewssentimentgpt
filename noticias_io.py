@@ -33,11 +33,13 @@ def __le_parquet_df(caminho):
 
 
 def __salva_excel_df(df, caminho):
+    df.to_excel(caminho.replace('.xlsx', '_bkp.xlsx'), index=False)
     return df.to_excel(caminho, index=False)
 
 
 def __salva_parquet_df(df, caminho):
     df = __ajusta_datas_df(df)
+    df.to_parquet(caminho.replace('.parquet', '_bkp.parquet'))
     return df.to_parquet(caminho)
 
 

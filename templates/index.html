@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Análise de sentimento ESG de empresas brasileiras</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
@@ -120,8 +120,8 @@
         <br>
         <h2>&nbsp;Principais notícias positivas</h2>
 
-        <div class="table-responsive">
-            <table class="table table-striped table-sm">
+        <div class="table-responsive m-1">
+            <table class="table table-striped table-sm  small">
                 <thead>
                     <tr class="table-dark">
                         <th scope="col"></th>
@@ -153,9 +153,9 @@
         </div>
         <br>
         <h2>&nbsp;Principais notícias negativas</h2>
-             <div class="table-responsive">
+             <div class="table-responsive m-1">
 
-                <table class="table table-striped table-sm">
+                <table class="table table-striped table-sm  small">
                     <thead>
                         <tr class="table-dark">
                             <th scope="col"></th>
@@ -218,13 +218,13 @@
                       <! -- Secao como utilizar -->
                       <div class="accordion-item">
                         <h2 class="accordion-header">
-                          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                            Introdução
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                            Sobre a ferramenta
                           </button>
                         </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                        <div id="collapseOne" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
                           <div class="accordion-body">
-                            <strong>Como utilizar a ferramenta? </strong>Selecione a empresa no menu e clique em <strong>Analisar</strong>. Será aplicado um algoritmo de análise de sentimentos a um conjunto de notícias previamente capturado para a empresa. Para a maioria das empresas, as notícias foram capturadas até Fevereiro de 2023.
+                            <strong>Como utilizar a ferramenta? </strong>Selecione a empresa no menu e clique em <strong>Analisar</strong>. Serão exibidos as notícias, resumos e avaliação do sentimento ESG.
                             <br><strong>Importante: </strong>
                             <ul>
                                 <li>Esta ferramenta foi construída apenas para fins de <strong>pesquisa acadêmica</strong>.</li>
@@ -232,31 +232,18 @@
                                 <li>Qualquer conclusão a esse respeito não deve ser feita, e nem é endossada pelos autores.</li>
                                 <li>Como qualquer ferramenta de inteligência artificial, o modelo deste projeto é sujeito a falhas, que podem produzir resultados descolados da realidade.</li>
                             </ul>
-                          </div>
-                        </div>
-                      </div>
-
-                      <! -- Secao algoritmo -->
-                      <div class="accordion-item">
-                        <h2 class="accordion-header">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseThree">
-                            Como funciona o algoritmo?
-                          </button>
-                        </h2>
-                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                          <div class="accordion-body">
-                                O algoritmo tem a  seguinte lógica e passos:
-                                <ul>
-                                  <li>As notícias foram <strong>previamente coletadas</strong> de diversas fontes, utilizando o GoogleNews. Foram selecionadas apenas as notícias que continham <strong>termos relacionados</strong> aos assuntos ESG</li>
-                                  <li>Cada notícia é <strong>classificada</strong> entre em uma das dimensões - E, S ou G - de acordo com um algoritmo de aprendizado de máquina semi-supervisionado .</li>
-                                  <li>A API do CHAT-GPT 4.0 é utilizada para determinar o sentimento da noticia.</li>
-                                  <li>É calculada uma curva de <strong>polaridade</strong> média para cada empresa no tempo, representando o <strong>sentimento</strong> médio das notícias. A curva é tratada com o modelo de média móvel <a href="https://pt.m.wikipedia.org/wiki/Média_móvel#Média_móvel_exponencial_ponderada">EWMA</a></li>
-                                </ul>
-
+                            <br>
+                            O <b>algoritmo</b> tem a  seguinte lógica e passos:
+                            <ul>
+                                <li>As notícias foram <strong>previamente coletadas</strong> de diversas fontes, utilizando o <a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="https://pypi.org/project/gnews/">Google News</a>. Foram selecionadas apenas as notícias que continham <strong>termos relacionados</strong> aos assuntos ESG</li>
+                                <li>Cada notícia é <strong>classificada</strong> entre em uma das dimensões - E, S ou G - de acordo com um algoritmo de aprendizado de máquina <a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="https://pt.wikipedia.org/wiki/Máquina_de_vetores_de_suporte">SVM</a> (Support Vector Machines).</li>
+                                <li>A API do <a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="https://openai.com/gpt-4">Chat GPT 4.0</a> é utilizada para determinar o sentimento da noticia, gerando uma medida conhecida como <b>polaridade</b>, que vai de <b>-1</b> (mais negativo) até <b>+1</b> (mais positivo), além de resumir os textos e confirmar a classificação.</li>
+                                <li>É calculada a curva de <strong>polaridade</strong> média para cada empresa no tempo, representando o <strong>sentimento</strong> médio das notícias. A curva é tratada com o modelo de média móvel <a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="https://pt.m.wikipedia.org/wiki/Média_móvel#Média_móvel_exponencial_ponderada">EWMA</a></li>
+                            </ul>
 
                                 <div class="table-responsive m-4">
 
-                                          <table class="table table-striped table-sm">
+                                          <table class="table table-striped table-sm small">
                                               <thead>
                                                   <tr>
                                                       <th scope="col">Notícia</th>
@@ -297,23 +284,181 @@
 
                                 </div>
 
-                          </div>  <! -- fim textos algoritmo -->
-                        </div>
-                      </div>
-
-                      <! -- Secao codigo fonte -->
-                      <div class="accordion-item">
-                        <h2 class="accordion-header">
-                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                            Código-fonte
-                          </button>
-                        </h2>
-                        <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                          <div class="accordion-body">
-                            O projeto foi desenvolvido em Python e o código está disponível no GitHUB em:<br><a href="https://github.com/danielsaraivaleite/AnaliseSentimentoNoticiasESG">AnaliseSentimentoNoticiasESG</a>
+                            O projeto foi desenvolvido em Python e o código está disponível no <a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="https://github.com/danielsaraivaleite/esgnewssentimentgpt">GitHub</a> <br>
                           </div>
                         </div>
                       </div>
+
+
+                      <! -- Secao base de dados -->
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Sobre a Base de dados
+                          </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse " data-bs-parent="#accordionExample">
+                          <div class="accordion-body">
+
+                                </p>A base cobre <b>{{ qt_emp }}</b> empresas no total, sendo <b>{{ qt_emp_ab }}</b> listadas na bolsa.</p>
+                                <center><img src="{{ url_for('static', filename='images/grafico_base_dados_total.png') }}" class="img-fluid"  alt="Gráfico base de dados"></center>
+                          </div>
+                        </div>
+                      </div>
+
+
+                      <! -- Secao destaques -->
+                      <div class="accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                            Destaques
+                          </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                          <div class="accordion-body">
+
+
+                                     <h5 class="text-left">Maiores variações</h4>
+                                     <p><small></p><b>Conceito: </b>Considera as 3 dimensões - E, S e G - conjuntamente. Números representam a variação da medida de polaridade, que vai de -1 (sentimento mais negativo) até +1 (sentimento mais positivo).</small></p>
+
+                                     <div class="table-responsive  ">
+
+                                        <table class="table table-striped table-sm small">
+
+                                            <tbody>
+                                                <tr class="table-light">
+                                                    <th colspan="8" class="text-center">Mais negativas</th>
+                                                </tr>
+                                                <tr class="table-dark">
+                                                    <th scope="col" class="text-end">Empresa</th>
+                                                    <th scope="col" class="text-center">&#916; 18m</th>
+                                                    <th scope="col" class="text-end">Empresa</th>
+                                                    <th scope="col" class="text-center">&#916; 12m</th>
+                                                    <th scope="col" class="text-end">Empresa</th>
+                                                    <th scope="col" class="text-center">&#916; 6m</th>
+                                                    <th scope="col" class="text-end">Empresa</th>
+                                                    <th scope="col" class="text-center">&#916; 3m</th>
+                                                </tr>
+
+
+                                                {% for row in tabela_destaques_neg %}
+                                                    <tr>
+                                                        <td class="align-middle text-end"><a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="{{ url_for('index', empresa=trata_nome(row['Nome_Var_M18']))}}">{{ row['Nome_Var_M18'] }} </a></td>
+                                                        <td class="{{ formato_tabela(row['Var_M18']|float) if row['Var_M18'] is not none and row['Var_M18'] != '' else ''  }} align-right text-center">{{'%0.2f'|format(row['Var_M18']|float)  if row['Var_M18'] is not none and row['Var_M18'] != '' else '' }}</td>
+                                                        <td class="align-middle  text-end"><a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="{{ url_for('index', empresa=trata_nome(row['Nome_Var_M12']))}}">{{ row['Nome_Var_M12'] }} </a></td>
+                                                        <td class="{{ formato_tabela(row['Var_M12']|float) if row['Var_M12'] is not none and row['Var_M12'] != '' else ''  }} align-right text-center">{{'%0.2f'|format(row['Var_M12']|float)  if row['Var_M12'] is not none and row['Var_M12'] != '' else '' }}</td>
+                                                        <td class="align-middle  text-end"><a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="{{ url_for('index', empresa=trata_nome(row['Nome_Var_M6']))}}">{{ row['Nome_Var_M6'] }} </a></td>
+                                                        <td class="{{ formato_tabela(row['Var_M6']|float) if row['Var_M6'] is not none and row['Var_M6'] != '' else ''  }} align-right text-center">{{'%0.2f'|format(row['Var_M6']|float)  if row['Var_M6'] is not none and row['Var_M6'] != '' else '' }}</td>
+                                                        <td class="align-middle  text-end"><a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="{{ url_for('index', empresa=trata_nome(row['Nome_Var_M3']))}}">{{ row['Nome_Var_M3'] }} </a></td>
+                                                        <td class="{{ formato_tabela(row['Var_M3']|float) if row['Var_M3'] is not none and row['Var_M3'] != '' else ''  }} align-right text-center">{{'%0.2f'|format(row['Var_M3']|float)  if row['Var_M3'] is not none and row['Var_M3'] != '' else '' }}</td>
+                                                    </tr>
+                                                {% endfor %}
+
+                                                <tr class="table-light">
+                                                    <th colspan="8" class="text-center">Mais positivas</th>
+                                                </tr>
+                                                <tr class="table-dark">
+                                                    <th scope="col" class="text-end">Empresa</th>
+                                                    <th scope="col" class="text-center">&#916; 18m</th>
+                                                    <th scope="col" class="text-end">Empresa</th>
+                                                    <th scope="col" class="text-center">&#916; 12m</th>
+                                                    <th scope="col" class="text-end">Empresa</th>
+                                                    <th scope="col" class="text-center">&#916; 6m</th>
+                                                    <th scope="col" class="text-end">Empresa</th>
+                                                    <th scope="col" class="text-center">&#916; 3m</th>
+                                                </tr>
+                                                {% for row in tabela_destaques_pos %}
+                                                    <tr>
+                                                        <td class="align-middle text-end"><a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="{{ url_for('index', empresa=trata_nome(row['Nome_Var_M18']))}}">{{ row['Nome_Var_M18'] }} </a></td>
+                                                        <td class="{{ formato_tabela(row['Var_M18']|float) if row['Var_M18'] is not none and row['Var_M18'] != '' else ''  }} align-right text-center">{{'%0.2f'|format(row['Var_M18']|float)  if row['Var_M18'] is not none and row['Var_M18'] != '' else '' }}</td>
+                                                        <td class="align-middle  text-end"><a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="{{ url_for('index', empresa=trata_nome(row['Nome_Var_M12']))}}">{{ row['Nome_Var_M12'] }} </a></td>
+                                                        <td class="{{ formato_tabela(row['Var_M12']|float) if row['Var_M12'] is not none and row['Var_M12'] != '' else ''  }} align-right text-center">{{'%0.2f'|format(row['Var_M12']|float)  if row['Var_M12'] is not none and row['Var_M12'] != '' else '' }}</td>
+                                                        <td class="align-middle  text-end"><a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="{{ url_for('index', empresa=trata_nome(row['Nome_Var_M6']))}}">{{ row['Nome_Var_M6'] }} </a></td>
+                                                        <td class="{{ formato_tabela(row['Var_M6']|float) if row['Var_M6'] is not none and row['Var_M6'] != '' else ''  }} align-right text-center">{{'%0.2f'|format(row['Var_M6']|float)  if row['Var_M6'] is not none and row['Var_M6'] != '' else '' }}</td>
+                                                        <td class="align-middle  text-end"><a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="{{ url_for('index', empresa=trata_nome(row['Nome_Var_M3']))}}">{{ row['Nome_Var_M3'] }} </a></td>
+                                                        <td class="{{ formato_tabela(row['Var_M3']|float) if row['Var_M3'] is not none and row['Var_M3'] != '' else ''  }} align-right text-center">{{'%0.2f'|format(row['Var_M3']|float)  if row['Var_M3'] is not none and row['Var_M3'] != '' else '' }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                     <h5 class="text-left">Notícias dos últimos 3 meses com maior polaridade</h4>
+                                     <p><small></p><b>Conceito: </b>Limitado a 2 notícias por empresa e a 30 no total. </small></p>
+
+                                    <div class="table-responsive ">
+                                        <table class="table table-striped table-sm  small">
+                                            <tr class="table-light">
+                                                    <th colspan="7" class="text-center">Mais negativas</th>
+                                            </tr>
+                                            <tr class="table-dark">
+                                                    <th scope="col"></th>
+                                                    <th scope="col">Empresa</th>
+                                                    <th scope="col">Data</th>
+                                                    <th scope="col">Fonte</th>
+                                                    <th scope="col">Título</th>
+                                                    <th scope="col">Dimensão</th>
+                                                    <th scope="col">Polaridade</th>
+                                            </tr>
+
+                                            <tbody>
+                                                {% for row in df_ultimas_negativas %}
+                                                    <tr>
+                                                        <td class="align-middle"><a href="{{ row['url'] }}" target="_blank" class="link-secondary">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-newspaper" viewBox="0 0 16 16">
+                                                              <path d="M0 2.5A1.5 1.5 0 0 1 1.5 1h11A1.5 1.5 0 0 1 14 2.5v10.528c0 .3-.05.654-.238.972h.738a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 1 1 0v9a1.5 1.5 0 0 1-1.5 1.5H1.497A1.497 1.497 0 0 1 0 13.5v-11zM12 14c.37 0 .654-.211.853-.441.092-.106.147-.279.147-.531V2.5a.5.5 0 0 0-.5-.5h-11a.5.5 0 0 0-.5.5v11c0 .278.223.5.497.5H12z"/>
+                                                              <path d="M2 3h10v2H2V3zm0 3h4v3H2V6zm0 4h4v1H2v-1zm0 2h4v1H2v-1zm5-6h2v1H7V6zm3 0h2v1h-2V6zM7 8h2v1H7V8zm3 0h2v1h-2V8zm-3 2h2v1H7v-1zm3 0h2v1h-2v-1zm-3 2h2v1H7v-1zm3 0h2v1h-2v-1z"/>
+                                                            </svg>
+                                                        </a></td>
+
+                                                        <td class="align-middle"><a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="{{ url_for('index', empresa=trata_nome(row['Nome']))}}">{{ row['Nome'] }} </a></td>
+                                                        <td class="align-middle">{{ row['data_publicacao'].strftime('%d/%m/%Y') }}</td>
+                                                        <td class="align-middle">{{ row['fonte'] }}</td>
+                                                        <td class="align-middle">{{ row['titulo']  }} <small><br><b>Resumo Chat-GPT</b>:&nbsp {{ row['gpt_resumo']  }}</small></td>
+                                                        <td class="align-middle text-center">{{ row['classificacao'] }}</td>
+                                                        <td class="{{ formato_tabela(row['polaridade']|float)  }} align-middle text-center">{{'%0.2f'|format(row['polaridade']|float)}}</td>
+                                                    </tr>
+                                                {% endfor %}
+
+                                            <tr class="table-light">
+                                                    <th colspan="7" class="text-center">Mais positivas</th>
+                                            </tr>
+                                            <tr class="table-dark">
+                                                    <th scope="col"></th>
+                                                    <th scope="col">Empresa</th>
+                                                    <th scope="col">Data</th>
+                                                    <th scope="col">Fonte</th>
+                                                    <th scope="col">Título</th>
+                                                    <th scope="col">Dimensão</th>
+                                                    <th scope="col">Polaridade</th>
+                                            </tr>
+
+                                                {% for row in df_ultimas_positivas %}
+                                                    <tr>
+                                                        <td class="align-middle"><a href="{{ row['url'] }}" target="_blank" class="link-secondary">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-newspaper" viewBox="0 0 16 16">
+                                                              <path d="M0 2.5A1.5 1.5 0 0 1 1.5 1h11A1.5 1.5 0 0 1 14 2.5v10.528c0 .3-.05.654-.238.972h.738a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 1 1 0v9a1.5 1.5 0 0 1-1.5 1.5H1.497A1.497 1.497 0 0 1 0 13.5v-11zM12 14c.37 0 .654-.211.853-.441.092-.106.147-.279.147-.531V2.5a.5.5 0 0 0-.5-.5h-11a.5.5 0 0 0-.5.5v11c0 .278.223.5.497.5H12z"/>
+                                                              <path d="M2 3h10v2H2V3zm0 3h4v3H2V6zm0 4h4v1H2v-1zm0 2h4v1H2v-1zm5-6h2v1H7V6zm3 0h2v1h-2V6zM7 8h2v1H7V8zm3 0h2v1h-2V8zm-3 2h2v1H7v-1zm3 0h2v1h-2v-1zm-3 2h2v1H7v-1zm3 0h2v1h-2v-1z"/>
+                                                            </svg>
+                                                        </a></td>
+
+                                                        <td class="align-middle"><a class="link-body-emphasis link-offset-2 link-underline-opacity-25 link-underline-opacity-75-hover" href="{{ url_for('index', empresa=trata_nome(row['Nome']))}}">{{ row['Nome'] }} </a></td>
+                                                        <td class="align-middle">{{ row['data_publicacao'].strftime('%d/%m/%Y') }}</td>
+                                                        <td class="align-middle">{{ row['fonte'] }}</td>
+                                                        <td class="align-middle">{{ row['titulo']  }} <small><br><b>Resumo Chat-GPT</b>:&nbsp {{ row['gpt_resumo']  }}</small></td>
+                                                        <td class="align-middle text-center">{{ row['classificacao'] }}</td>
+                                                        <td class="{{ formato_tabela(row['polaridade']|float)  }} align-middle text-center">{{'%0.2f'|format(row['polaridade']|float)}}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+
+                          </div>
+                        </div>
+                      </div>
+
 
 
             </div>    <! -- fim acordion -->

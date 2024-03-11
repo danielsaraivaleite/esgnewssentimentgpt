@@ -363,6 +363,8 @@ def filtrar_noticias_pos_coleta_modelo_simplificado(dfNoticias, df_empresas, fil
     dfFiltrado = dfFiltrado[dfFiltrado['fonte'].str.lower() != 'Rede Brasil Atual'.lower()] 
     dfFiltrado = dfFiltrado[dfFiltrado['fonte'].str.lower() != 'MPF'.lower()] 
     dfFiltrado = dfFiltrado[dfFiltrado['fonte'].str.lower() != 'braskem.com.br'.lower()] 
+    dfFiltrado = dfFiltrado[dfFiltrado['fonte'].str.lower() != 'braskem'.lower()] 
+    dfFiltrado = dfFiltrado[dfFiltrado['fonte'].str.lower() != 'taurus'.lower()] 
     dfFiltrado = dfFiltrado[dfFiltrado['fonte'].str.lower() != 'PT'.lower()] 
     dfFiltrado = dfFiltrado[dfFiltrado['fonte'].str.lower() != 'Engeplus'.lower()] 
     dfFiltrado = dfFiltrado[dfFiltrado['fonte'].str.lower() != 'Gerdau'.lower()] 
@@ -371,9 +373,6 @@ def filtrar_noticias_pos_coleta_modelo_simplificado(dfNoticias, df_empresas, fil
     dfFiltrado = dfFiltrado[dfFiltrado['fonte'].str.lower() != 'PANROTAS'.lower()] 
     dfFiltrado = dfFiltrado[dfFiltrado['fonte'].str.lower() != 'bomdia.eu'] 
     
-
-    # Outros - remove noticias com classificacao outros apos aplicacao do modelo de ML
-    dfFiltrado = dfFiltrado[dfFiltrado['classificacao'] != 'Outros'] 
     
     if filtrar_termos_especificos:
         # termos a excluir
